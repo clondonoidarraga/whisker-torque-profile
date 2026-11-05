@@ -1,0 +1,76 @@
+diff --git a/code/include/Parameters.h b/code/include/Parameters.h
+index 0a8f764..7332be0 100644
+--- a/code/include/Parameters.h
++++ b/code/include/Parameters.h
+@@ -96,6 +96,9 @@ public:
+ 	std::string dir_out;
+ 	std::string file_video;
+ 	std::string file_env;
++	btVector3 ENV_LOC;      // posición del objeto .obj (mm)
++	float ENV_YAW;          // rotación del objeto alrededor de z (grados)
++	float ENV_SCALE;        // diagonal de la caja envolvente en mm (0 = usar unidades del archivo)
+ 	std::string file_curvWall;
+ };
+ 
+diff --git a/code/src/Parameters.cpp b/code/src/Parameters.cpp
+index 5b29cab..61683c6 100644
+--- a/code/src/Parameters.cpp
++++ b/code/src/Parameters.cpp
+@@ -84,7 +84,10 @@ Parameters::Parameters(){
+ 	// input/output file paths
+ 	dir_out = "../output/test";
+ 	file_video = "../output/video_test.mp4";
+-	file_env = "../data/environment/env_1.obj";	
++	file_env = "../data/environment/env_1.obj";
++	ENV_LOC = btVector3(0,0,0);
++	ENV_YAW = 0;
++	ENV_SCALE = 1000.;   // comportamiento original: diagonal normalizada a 1000 mm	
+ 
+ }
+ 
+diff --git a/code/src/Simulation.cpp b/code/src/Simulation.cpp
+index abd184f..2ba4bd9 100644
+--- a/code/src/Simulation.cpp
++++ b/code/src/Simulation.cpp
+@@ -198,7 +198,8 @@ void Simulation::initPhysics()
+ 	else if(parameters->OBJECT==3){
+ 		// add environment to world
+ 		btVector4 envColor = btVector4(0.6,0.6,0.6,1);
+-		env = new Object(m_guiHelper,m_dynamicsWorld, &m_collisionShapes,btTransform(),parameters->file_env,envColor,btScalar(SCALE),btScalar(0),COL_ENV,envCollidesWith);
++		btTransform envTrans = createFrame(parameters->ENV_LOC, btVector3(0,0,parameters->ENV_YAW*PI/180.));
++		env = new Object(m_guiHelper,m_dynamicsWorld, &m_collisionShapes,envTrans,parameters->file_env,envColor,btScalar(parameters->ENV_SCALE),btScalar(0),COL_ENV,envCollidesWith);
+ 	}
+ 	
+ 	// generate graphics
+diff --git a/code/src/main.cpp b/code/src/main.cpp
+index 439c239..4f47a50 100644
+--- a/code/src/main.cpp
++++ b/code/src/main.cpp
+@@ -87,6 +87,10 @@ int main(int argc, char* argv[])
+ 		("CYAW", po::value<std::string>(), "head yaw")
+ 		
+ 		("SPEED", po::value<float>(&param->PEG_SPEED), "peg speed")
++		("PEG_LOC", po::value<std::vector<std::string> >()->multitoken(), "peg location x y z (mm)")
++		("ENV_LOC", po::value<std::vector<std::string> >()->multitoken(), "obj location x y z (mm)")
++		("ENV_YAW", po::value<float>(&param->ENV_YAW), "obj yaw rotation (deg)")
++		("ENV_SCALE", po::value<float>(&param->ENV_SCALE), "obj bounding diagonal (mm); 0 = file units")
+ 
+ 		("dir_out", po::value<std::string>(&param->dir_out), "foldername for output file")
+ 		("file_video", po::value<std::string>(&param->file_video), "filename of video")
+@@ -145,6 +149,16 @@ int main(int argc, char* argv[])
+ 				param->RATHEAD_LOC[2] = lexical_cast<float>(coordinates[2]);
+ 			}	
+ 
++			std::vector<std::string> pegloc;
++			if (vm.count("PEG_LOC") && (pegloc = vm["PEG_LOC"].as<std::vector<std::string> >()).size() == 3) {
++				param->PEG_LOC = btVector3(lexical_cast<float>(pegloc[0]), lexical_cast<float>(pegloc[1]), lexical_cast<float>(pegloc[2]));
++			}
++
++			std::vector<std::string> envloc;
++			if (vm.count("ENV_LOC") && (envloc = vm["ENV_LOC"].as<std::vector<std::string> >()).size() == 3) {
++				param->ENV_LOC = btVector3(lexical_cast<float>(envloc[0]), lexical_cast<float>(envloc[1]), lexical_cast<float>(envloc[2]));
++			}
++
+ 			std::vector<std::string> angles;
+ 			if (!vm["ORIENTATION"].empty() && (angles = vm["ORIENTATION"].as<std::vector<std::string> >()).size() == 3) {
+ 				param->RATHEAD_ORIENT[0] = lexical_cast<float>(angles[0]);
