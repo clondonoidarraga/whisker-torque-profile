@@ -1,0 +1,12 @@
+# datos pesados y compilados: no se versionan (se regeneran con los scripts / cuadernos)
+*.npz
+whiskitphysics/
+dataset/full_*/
+dataset/pilot_*/
+dataset/dry_*/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+
+# excepción: geometría de los bigotes (pequeña, necesaria para generar poses)
+!dataset/whisker_geometry.npz
