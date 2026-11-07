@@ -1,0 +1,29 @@
+[datos] contact_only: 283 de 300
+[datos] N=283 simulaciones, T=498 pasos (stride 2), F=27x6=162 features
+  fold 0 seed 0: err_pos=1.79 mm  MAE x=1.33 y=0.91  R2 x=0.95 y=0.95  (85 ep)
+  fold 0 seed 1: err_pos=1.70 mm  MAE x=1.37 y=0.77  R2 x=0.95 y=0.97  (109 ep)
+  fold 0 seed 2: err_pos=1.59 mm  MAE x=1.21 y=0.83  R2 x=0.96 y=0.96  (140 ep)
+[fold 0] media: 9.22 mm | ridge: 2.78 mm | rf: 1.20 mm | cnn-lstm: 1.70 mm   (4.1 min)
+  fold 1 seed 0: err_pos=1.80 mm  MAE x=1.05 y=1.27  R2 x=0.97 y=0.90  (89 ep)
+  fold 1 seed 1: err_pos=2.08 mm  MAE x=1.48 y=1.15  R2 x=0.92 y=0.91  (83 ep)
+  fold 1 seed 2: err_pos=1.60 mm  MAE x=1.02 y=1.04  R2 x=0.96 y=0.92  (103 ep)
+[fold 1] media: 8.73 mm | ridge: 4.89 mm | rf: 2.07 mm | cnn-lstm: 1.83 mm   (7.4 min)
+  fold 2 seed 0: err_pos=1.75 mm  MAE x=1.37 y=0.89  R2 x=0.95 y=0.95  (175 ep)
+  fold 2 seed 1: err_pos=2.04 mm  MAE x=1.58 y=0.87  R2 x=0.94 y=0.95  (162 ep)
+  fold 2 seed 2: err_pos=1.75 mm  MAE x=1.21 y=1.04  R2 x=0.95 y=0.94  (107 ep)
+[fold 2] media: 9.99 mm | ridge: 3.28 mm | rf: 1.78 mm | cnn-lstm: 1.84 mm   (12.5 min)
+  fold 3 seed 0: err_pos=1.78 mm  MAE x=1.25 y=1.09  R2 x=0.95 y=0.93  (112 ep)
+  fold 3 seed 1: err_pos=1.81 mm  MAE x=1.29 y=1.03  R2 x=0.95 y=0.94  (103 ep)
+  fold 3 seed 2: err_pos=1.72 mm  MAE x=1.27 y=0.91  R2 x=0.95 y=0.96  (146 ep)
+[fold 3] media: 9.78 mm | ridge: 4.04 mm | rf: 1.75 mm | cnn-lstm: 1.77 mm   (16.6 min)
+  fold 4 seed 0: err_pos=1.56 mm  MAE x=1.11 y=0.91  R2 x=0.95 y=0.94  (127 ep)
+  fold 4 seed 1: err_pos=1.76 mm  MAE x=1.32 y=0.98  R2 x=0.94 y=0.94  (115 ep)
+  fold 4 seed 2: err_pos=1.66 mm  MAE x=1.26 y=0.82  R2 x=0.94 y=0.93  (114 ep)
+[fold 4] media: 9.62 mm | ridge: 3.88 mm | rf: 1.77 mm | cnn-lstm: 1.66 mm   (20.7 min)
+
+=== RESUMEN (media ± desv. entre folds/semillas) ===
+mean_baseline  err_pos =  9.47 ± 0.45 mm | MAE x 7.17 y 4.97 | R² x -0.03 y -0.00
+ridge          err_pos =  3.77 ± 0.72 mm | MAE x 2.66 y 2.16 | R² x 0.73 y 0.44
+rf_contact_map err_pos =  1.71 ± 0.28 mm | MAE x 1.39 y 0.79 | R² x 0.91 y 0.96
+cnn_lstm       err_pos =  1.76 ± 0.14 mm | MAE x 1.28 y 0.97 | R² x 0.95 y 0.94
+[guardado] data_full/results_A_s2/results.json y preds.npz
