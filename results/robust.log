@@ -1,0 +1,16 @@
+[fold 0] clean: cnn 1.79 rf 1.20 | noise_0.05: cnn 1.80 rf 1.97 | noise_0.10: cnn 1.81 rf 3.38 | noise_0.20: cnn 1.84 rf 5.77 | amp_0.8: cnn 1.94 rf 1.79 | amp_1.2: cnn 1.94 rf 2.34 | shift_5: cnn 1.77 rf 1.20 | shift_-5: cnn 1.88 rf 1.20
+[fold 1] clean: cnn 1.52 rf 2.07 | noise_0.05: cnn 1.52 rf 2.49 | noise_0.10: cnn 1.53 rf 4.21 | noise_0.20: cnn 1.55 rf 4.94 | amp_0.8: cnn 2.45 rf 2.30 | amp_1.2: cnn 2.32 rf 2.72 | shift_5: cnn 1.56 rf 2.07 | shift_-5: cnn 1.58 rf 2.06
+[fold 2] clean: cnn 1.97 rf 1.78 | noise_0.05: cnn 1.97 rf 3.00 | noise_0.10: cnn 1.97 rf 4.43 | noise_0.20: cnn 1.96 rf 6.70 | amp_0.8: cnn 2.51 rf 2.33 | amp_1.2: cnn 1.89 rf 2.74 | shift_5: cnn 2.03 rf 1.78 | shift_-5: cnn 1.97 rf 1.78
+[fold 3] clean: cnn 2.10 rf 1.75 | noise_0.05: cnn 2.09 rf 2.32 | noise_0.10: cnn 2.08 rf 3.28 | noise_0.20: cnn 2.07 rf 5.63 | amp_0.8: cnn 2.64 rf 2.10 | amp_1.2: cnn 2.18 rf 2.74 | shift_5: cnn 2.09 rf 1.75 | shift_-5: cnn 2.24 rf 1.76
+[fold 4] clean: cnn 1.81 rf 1.77 | noise_0.05: cnn 1.81 rf 2.27 | noise_0.10: cnn 1.81 rf 3.46 | noise_0.20: cnn 1.79 rf 5.19 | amp_0.8: cnn 2.16 rf 2.52 | amp_1.2: cnn 1.89 rf 2.54 | shift_5: cnn 1.83 rf 1.76 | shift_-5: cnn 1.85 rf 1.77
+
+=== ROBUSTEZ: error de posición (mm), media ± desv. entre folds ===
+condición            CNN-LSTM   RF mapa contacto
+clean           1.84 ± 0.20       1.71 ± 0.28
+noise_0.05      1.84 ± 0.19       2.41 ± 0.34
+noise_0.10      1.84 ± 0.19       3.75 ± 0.47
+noise_0.20      1.84 ± 0.17       5.65 ± 0.61
+amp_0.8         2.34 ± 0.25       2.21 ± 0.25
+amp_1.2         2.04 ± 0.18       2.62 ± 0.16
+shift_5         1.86 ± 0.19       1.71 ± 0.28
+shift_-5        1.90 ± 0.21       1.71 ± 0.28

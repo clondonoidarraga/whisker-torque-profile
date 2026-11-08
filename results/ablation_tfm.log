@@ -1,0 +1,4 @@
+[fold 0 seed 0] tfm_3bilstm  smoothl1  err=3.48 mm  (54 ep, 6405k par, 10133s)  total 168.9 min
+
+=== ABLATION (error de posición, mm) ===
+tfm_3bilstm|smoothl1      3.48 ± 0.00      6405k parámetros   10133 s/entrenamiento   54 épocas

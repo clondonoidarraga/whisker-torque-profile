@@ -1,0 +1,68 @@
+[fold 0 seed 0] cnn_lstm     smoothl1  err=1.58 mm  (163 ep, 148k par, 110s)  total 1.8 min
+[fold 0 seed 1] cnn_lstm     smoothl1  err=1.98 mm  (80 ep, 148k par, 48s)  total 2.6 min
+[fold 0 seed 0] cnn_only     smoothl1  err=1.82 mm  (107 ep, 77k par, 40s)  total 3.3 min
+[fold 0 seed 1] cnn_only     smoothl1  err=2.02 mm  (67 ep, 77k par, 26s)  total 3.7 min
+[fold 0 seed 0] lstm_only    smoothl1  err=1.60 mm  (133 ep, 125k par, 82s)  total 5.1 min
+[fold 0 seed 1] lstm_only    smoothl1  err=1.86 mm  (135 ep, 125k par, 96s)  total 6.7 min
+[fold 0 seed 0] tcn          smoothl1  err=2.09 mm  (43 ep, 139k par, 47s)  total 7.5 min
+[fold 0 seed 1] tcn          smoothl1  err=1.40 mm  (101 ep, 139k par, 113s)  total 9.4 min
+[fold 0 seed 0] cnn_lstm     mse       err=1.42 mm  (121 ep, 148k par, 75s)  total 10.6 min
+[fold 0 seed 1] cnn_lstm     mse       err=1.23 mm  (133 ep, 148k par, 90s)  total 12.1 min
+[fold 0 seed 0] cnn_lstm     mse_ssim  err=1.99 mm  (139 ep, 148k par, 94s)  total 13.7 min
+[fold 0 seed 1] cnn_lstm     mse_ssim  err=10.47 mm  (21 ep, 148k par, 16s)  total 14.0 min
+[fold 1 seed 0] cnn_lstm     smoothl1  err=1.77 mm  (114 ep, 148k par, 78s)  total 15.3 min
+[fold 1 seed 1] cnn_lstm     smoothl1  err=1.78 mm  (112 ep, 148k par, 70s)  total 16.4 min
+[fold 1 seed 0] cnn_only     smoothl1  err=1.70 mm  (131 ep, 77k par, 58s)  total 17.4 min
+[fold 1 seed 1] cnn_only     smoothl1  err=2.16 mm  (92 ep, 77k par, 37s)  total 18.0 min
+[fold 1 seed 0] lstm_only    smoothl1  err=1.78 mm  (73 ep, 125k par, 51s)  total 18.9 min
+[fold 1 seed 1] lstm_only    smoothl1  err=1.34 mm  (97 ep, 125k par, 66s)  total 20.0 min
+[fold 1 seed 0] tcn          smoothl1  err=1.17 mm  (124 ep, 139k par, 135s)  total 22.2 min
+[fold 1 seed 1] tcn          smoothl1  err=1.95 mm  (67 ep, 139k par, 73s)  total 23.4 min
+[fold 1 seed 0] cnn_lstm     mse       err=1.36 mm  (110 ep, 148k par, 71s)  total 24.6 min
+[fold 1 seed 1] cnn_lstm     mse       err=1.76 mm  (75 ep, 148k par, 49s)  total 25.4 min
+[fold 1 seed 0] cnn_lstm     mse_ssim  err=2.02 mm  (156 ep, 148k par, 109s)  total 27.3 min
+[fold 1 seed 1] cnn_lstm     mse_ssim  err=38.42 mm  (21 ep, 148k par, 15s)  total 27.5 min
+[fold 2 seed 0] cnn_lstm     smoothl1  err=2.19 mm  (106 ep, 148k par, 75s)  total 28.7 min
+[fold 2 seed 1] cnn_lstm     smoothl1  err=1.87 mm  (102 ep, 148k par, 68s)  total 29.9 min
+[fold 2 seed 0] cnn_only     smoothl1  err=1.82 mm  (107 ep, 77k par, 45s)  total 30.6 min
+[fold 2 seed 1] cnn_only     smoothl1  err=1.73 mm  (142 ep, 77k par, 58s)  total 31.6 min
+[fold 2 seed 0] lstm_only    smoothl1  err=2.14 mm  (64 ep, 125k par, 49s)  total 32.4 min
+[fold 2 seed 1] lstm_only    smoothl1  err=2.17 mm  (102 ep, 125k par, 74s)  total 33.7 min
+[fold 2 seed 0] tcn          smoothl1  err=1.32 mm  (105 ep, 139k par, 114s)  total 35.6 min
+[fold 2 seed 1] tcn          smoothl1  err=1.33 mm  (94 ep, 139k par, 105s)  total 37.3 min
+[fold 2 seed 0] cnn_lstm     mse       err=1.75 mm  (125 ep, 148k par, 90s)  total 38.8 min
+[fold 2 seed 1] cnn_lstm     mse       err=1.62 mm  (145 ep, 148k par, 98s)  total 40.4 min
+[fold 2 seed 0] cnn_lstm     mse_ssim  err=1.50 mm  (152 ep, 148k par, 109s)  total 42.3 min
+[fold 2 seed 1] cnn_lstm     mse_ssim  err=1.90 mm  (177 ep, 148k par, 117s)  total 44.2 min
+[fold 3 seed 0] cnn_lstm     smoothl1  err=1.97 mm  (141 ep, 148k par, 98s)  total 45.8 min
+[fold 3 seed 1] cnn_lstm     smoothl1  err=1.76 mm  (118 ep, 148k par, 83s)  total 47.2 min
+[fold 3 seed 0] cnn_only     smoothl1  err=1.66 mm  (156 ep, 77k par, 65s)  total 48.3 min
+[fold 3 seed 1] cnn_only     smoothl1  err=1.66 mm  (122 ep, 77k par, 51s)  total 49.2 min
+[fold 3 seed 0] lstm_only    smoothl1  err=1.55 mm  (130 ep, 125k par, 95s)  total 50.7 min
+[fold 3 seed 1] lstm_only    smoothl1  err=1.76 mm  (117 ep, 125k par, 86s)  total 52.2 min
+[fold 3 seed 0] tcn          smoothl1  err=1.59 mm  (54 ep, 139k par, 59s)  total 53.2 min
+[fold 3 seed 1] tcn          smoothl1  err=1.01 mm  (164 ep, 139k par, 186s)  total 56.3 min
+[fold 3 seed 0] cnn_lstm     mse       err=1.68 mm  (114 ep, 148k par, 77s)  total 57.5 min
+[fold 3 seed 1] cnn_lstm     mse       err=1.55 mm  (122 ep, 148k par, 86s)  total 59.0 min
+[fold 3 seed 0] cnn_lstm     mse_ssim  err=2.10 mm  (141 ep, 148k par, 94s)  total 60.5 min
+[fold 3 seed 1] cnn_lstm     mse_ssim  err=1.86 mm  (190 ep, 148k par, 132s)  total 62.7 min
+[fold 4 seed 0] cnn_lstm     smoothl1  err=1.52 mm  (153 ep, 148k par, 110s)  total 64.6 min
+[fold 4 seed 1] cnn_lstm     smoothl1  err=1.63 mm  (136 ep, 148k par, 93s)  total 66.1 min
+[fold 4 seed 0] cnn_only     smoothl1  err=1.86 mm  (106 ep, 77k par, 47s)  total 66.9 min
+[fold 4 seed 1] cnn_only     smoothl1  err=1.94 mm  (94 ep, 77k par, 41s)  total 67.6 min
+[fold 4 seed 0] lstm_only    smoothl1  err=2.01 mm  (84 ep, 125k par, 66s)  total 68.7 min
+[fold 4 seed 1] lstm_only    smoothl1  err=1.43 mm  (94 ep, 125k par, 74s)  total 69.9 min
+[fold 4 seed 0] tcn          smoothl1  err=1.33 mm  (110 ep, 139k par, 127s)  total 72.0 min
+[fold 4 seed 1] tcn          smoothl1  err=1.24 mm  (132 ep, 139k par, 154s)  total 74.6 min
+[fold 4 seed 0] cnn_lstm     mse       err=1.53 mm  (140 ep, 148k par, 106s)  total 76.4 min
+[fold 4 seed 1] cnn_lstm     mse       err=1.53 mm  (116 ep, 148k par, 87s)  total 77.8 min
+[fold 4 seed 0] cnn_lstm     mse_ssim  err=1.66 mm  (193 ep, 148k par, 144s)  total 80.2 min
+[fold 4 seed 1] cnn_lstm     mse_ssim  err=1.56 mm  (200 ep, 148k par, 150s)  total 82.7 min
+
+=== ABLATION (error de posición, mm) ===
+cnn_lstm|smoothl1         1.81 ± 0.19       148k parámetros      83 s/entrenamiento   122 épocas
+cnn_only|smoothl1         1.84 ± 0.16        77k parámetros      47 s/entrenamiento   112 épocas
+lstm_only|smoothl1        1.76 ± 0.27       125k parámetros      74 s/entrenamiento   103 épocas
+tcn|smoothl1              1.44 ± 0.32       139k parámetros     111 s/entrenamiento   99 épocas
+cnn_lstm|mse              1.54 ± 0.16       148k parámetros      83 s/entrenamiento   120 épocas
+cnn_lstm|mse_ssim         6.35 ± 11.00       148k parámetros      98 s/entrenamiento   139 épocas
