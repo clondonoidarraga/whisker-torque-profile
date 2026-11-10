@@ -1,0 +1,16 @@
+[datos] 284 simulaciones con contacto de 300; T=498; clases [93 92 99]
+[fold 0] majority: acc 0.35 pos 5.27 | pose_only: acc 0.68 pos 0.00 | rf_contact_map: acc 0.68 pos 3.49 | cnn_lstm: acc 0.79 pos 3.99 | tcn: acc 0.74 pos 4.60   (3.2 min)
+[fold 1] majority: acc 0.35 pos 4.75 | pose_only: acc 0.63 pos 0.00 | rf_contact_map: acc 0.74 pos 3.04 | cnn_lstm: acc 0.61 pos 4.30 | tcn: acc 0.54 pos 7.03   (6.7 min)
+[fold 2] majority: acc 0.35 pos 4.65 | pose_only: acc 0.54 pos 0.00 | rf_contact_map: acc 0.72 pos 3.11 | cnn_lstm: acc 0.62 pos 3.85 | tcn: acc 0.63 pos 5.76   (9.5 min)
+[fold 3] majority: acc 0.35 pos 4.72 | pose_only: acc 0.63 pos 0.00 | rf_contact_map: acc 0.67 pos 3.13 | cnn_lstm: acc 0.73 pos 4.26 | tcn: acc 0.73 pos 4.15   (12.2 min)
+[fold 4] majority: acc 0.34 pos 5.30 | pose_only: acc 0.61 pos 0.00 | rf_contact_map: acc 0.68 pos 3.74 | cnn_lstm: acc 0.63 pos 4.14 | tcn: acc 0.61 pos 4.99   (15.0 min)
+
+=== RESUMEN TAREA B (media ± desv.) ===
+majority        exactitud 0.349 ± 0.005 | F1 macro 0.172 | error posición 4.94 ± 0.29 mm
+pose_only       exactitud 0.620 ± 0.046 | F1 macro 0.599 | error posición 0.00 ± 0.00 mm
+rf_contact_map  exactitud 0.697 ± 0.026 | F1 macro 0.689 | error posición 3.30 ± 0.27 mm
+cnn_lstm        exactitud 0.676 ± 0.084 | F1 macro 0.657 | error posición 4.11 ± 0.30 mm
+tcn             exactitud 0.648 ± 0.083 | F1 macro 0.619 | error posición 5.31 ± 1.08 mm
+rf_contact_map matriz de confusión (filas real: cil/prisma/onda): [[56, 30, 7], [29, 52, 11], [6, 3, 90]]
+cnn_lstm matriz de confusión (filas real: cil/prisma/onda): [[135, 36, 15], [76, 77, 31], [10, 16, 172]]
+tcn matriz de confusión (filas real: cil/prisma/onda): [[129, 38, 19], [80, 70, 34], [9, 20, 169]]
