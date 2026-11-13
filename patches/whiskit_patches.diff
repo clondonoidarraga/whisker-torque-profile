@@ -43,10 +43,19 @@ index abd184f..2ba4bd9 100644
  	
  	// generate graphics
 diff --git a/code/src/main.cpp b/code/src/main.cpp
-index 439c239..4f47a50 100644
+index 439c239..8b90d3d 100644
 --- a/code/src/main.cpp
 +++ b/code/src/main.cpp
-@@ -87,6 +87,10 @@ int main(int argc, char* argv[])
+@@ -78,6 +78,8 @@ int main(int argc, char* argv[])
+ 		("NO_WHISKERS", po::value<int>(&param->NO_WHISKERS), "whisker on/off")
+ 
+ 		("ACTIVE", po::value<int>(&param->ACTIVE), "active on/off")
++		("EXPLORING", po::value<int>(&param->EXPLORING), "head exploring on/off")
++		("file_head_traj", po::value<std::string>(&param->dir_rathead_trajectory), "csv with head velocities per step (9 cols: x y z vx vy vz wx wy wz)")
+ 		
+ 		("POSITION", po::value<std::vector<std::string> >()->multitoken(), "initial position of rat")
+ 		("ORIENTATION", po::value<std::vector<std::string> >()->multitoken(), "initial orientation of rat (euler angles)")
+@@ -87,6 +89,10 @@ int main(int argc, char* argv[])
  		("CYAW", po::value<std::string>(), "head yaw")
  		
  		("SPEED", po::value<float>(&param->PEG_SPEED), "peg speed")
@@ -57,7 +66,7 @@ index 439c239..4f47a50 100644
  
  		("dir_out", po::value<std::string>(&param->dir_out), "foldername for output file")
  		("file_video", po::value<std::string>(&param->file_video), "filename of video")
-@@ -145,6 +149,16 @@ int main(int argc, char* argv[])
+@@ -145,6 +151,16 @@ int main(int argc, char* argv[])
  				param->RATHEAD_LOC[2] = lexical_cast<float>(coordinates[2]);
  			}	
  
