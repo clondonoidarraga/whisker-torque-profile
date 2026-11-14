@@ -1,0 +1,15 @@
+[datos] N=1020 T=174 | relieve RMS 2.77 mm
+[pliegue 0] media: 2.79 | solo_y0: 3.01 | extratrees: 1.20 | barajado: 2.78 | cnn_lstm|mse: 1.34 | tcn|mse: 1.15 | cnn_lstm|mse_ssim: 1.36   (3.7 min)
+[pliegue 1] media: 2.72 | solo_y0: 2.92 | extratrees: 1.17 | barajado: 2.81 | cnn_lstm|mse: 1.38 | tcn|mse: 3.35 | cnn_lstm|mse_ssim: 2.03   (5.8 min)
+[pliegue 2] media: 2.76 | solo_y0: 2.92 | extratrees: 1.24 | barajado: 2.77 | cnn_lstm|mse: 1.34 | tcn|mse: 1.11 | cnn_lstm|mse_ssim: 1.39   (10.6 min)
+[pliegue 3] media: 2.78 | solo_y0: 2.94 | extratrees: 1.22 | barajado: 2.79 | cnn_lstm|mse: 1.41 | tcn|mse: 1.17 | cnn_lstm|mse_ssim: 1.41   (14.4 min)
+[pliegue 4] media: 2.78 | solo_y0: 2.96 | extratrees: 1.27 | barajado: 2.85 | cnn_lstm|mse: 1.36 | tcn|mse: 1.32 | cnn_lstm|mse_ssim: 1.37   (17.7 min)
+
+=== RESUMEN (relieve, 16 puntos) ===
+media                RMSE 2.76 ± 0.02 mm | mejora   0.0 % | corr. de forma (mediana) 0.11
+solo_y0              RMSE 2.95 ± 0.03 mm | mejora  -6.7 % | corr. de forma (mediana) 0.05
+extratrees           RMSE 1.22 ± 0.04 mm | mejora  55.9 % | corr. de forma (mediana) 0.93
+barajado             RMSE 2.80 ± 0.03 mm | mejora  -1.2 % | corr. de forma (mediana) -0.06
+cnn_lstm|mse         RMSE 1.36 ± 0.03 mm | mejora  50.7 % | corr. de forma (mediana) 0.91
+tcn|mse              RMSE 1.62 ± 0.87 mm | mejora  41.4 % | corr. de forma (mediana) 0.93
+cnn_lstm|mse_ssim    RMSE 1.51 ± 0.26 mm | mejora  45.3 % | corr. de forma (mediana) 0.89

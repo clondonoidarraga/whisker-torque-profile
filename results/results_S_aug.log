@@ -1,0 +1,15 @@
+[datos] N=1020 T=174 | relieve RMS 2.77 mm
+[pliegue 0] media: 2.79 | solo_y0: 3.01 | extratrees: 1.62 | barajado: 2.78 | cnn_lstm|mse: 1.47 | tcn|mse: 1.45   (3.1 min)
+[pliegue 1] media: 2.72 | solo_y0: 2.92 | extratrees: 1.53 | barajado: 2.81 | cnn_lstm|mse: 1.39 | tcn|mse: 1.42   (5.7 min)
+[pliegue 2] media: 2.76 | solo_y0: 2.92 | extratrees: 1.69 | barajado: 2.77 | cnn_lstm|mse: 1.44 | tcn|mse: 1.47   (8.7 min)
+[pliegue 3] media: 2.78 | solo_y0: 2.94 | extratrees: 1.65 | barajado: 2.79 | cnn_lstm|mse: 1.46 | tcn|mse: 1.48   (11.6 min)
+[pliegue 4] media: 2.78 | solo_y0: 2.96 | extratrees: 1.65 | barajado: 2.85 | cnn_lstm|mse: 1.46 | tcn|mse: 1.50   (14.4 min)
+
+=== RESUMEN (relieve, 16 puntos) ===
+RUIDO en la prueba (RMSE mm): extratrees: 5% 1.64, 10% 1.64, 20% 1.64 | cnn_lstm|mse: 5% 1.46, 10% 1.49, 20% 1.55 | tcn|mse: 5% 1.49, 10% 1.52, 20% 1.56
+media                RMSE 2.76 ± 0.02 mm | mejora   0.0 % | corr. de forma (mediana) 0.11
+solo_y0              RMSE 2.95 ± 0.03 mm | mejora  -6.7 % | corr. de forma (mediana) 0.05
+extratrees           RMSE 1.63 ± 0.05 mm | mejora  41.1 % | corr. de forma (mediana) 0.87
+barajado             RMSE 2.80 ± 0.03 mm | mejora  -1.2 % | corr. de forma (mediana) -0.06
+cnn_lstm|mse         RMSE 1.44 ± 0.03 mm | mejora  47.8 % | corr. de forma (mediana) 0.90
+tcn|mse              RMSE 1.46 ± 0.03 mm | mejora  47.1 % | corr. de forma (mediana) 0.90
