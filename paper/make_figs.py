@@ -43,3 +43,25 @@ ax.axhline(1/3,color="k",lw=0.7,ls="--"); ax.text(0.5,1/3-0.045,"chance",ha="cen
 ax.set_xticks(range(3)); ax.set_xticklabels(["D1\nstatic head\npose-coupled","D2\nstatic head\ndecoupled","D3\napproaching head\ndecoupled"])
 ax.set_ylabel("shape accuracy"); ax.set_ylim(0,0.8); ax.legend(ncol=2,loc="lower center",bbox_to_anchor=(0.5,1.0),handlelength=1.0,columnspacing=1.2)
 fig.savefig("figs/fig_shape.pdf"); plt.close(fig)
+
+OUT="figs/"; LBL_W="whiskers at rest"; LBL_WALL="wall with relief"; LBL_HEAD="head advances"; LBL_X="x (mm), rostral"; LBL_Y="y (mm), lateral"; LBL_TRUE="true"; LBL_ET="ExtraTrees"; LBL_PCT="P%d: %.1f mm"; LBL_S="position along the wall (mm)"; LBL_R="relief (mm)"
+# Fig 5: sweep setup (top view)
+import sys; sys.path.insert(0,"../dataset"); import run_dataset_S as S
+g=np.load("../dataset/whisker_geometry.npz"); rest=g["rest"]
+smp=S.sample(40,7)[3]; poly=np.array(S.polygon(smp["coef"],smp["y0"]))
+fig,ax=plt.subplots(figsize=(W,1.75))
+ax.scatter(rest[:,0],rest[:,1],s=1.2,color="#7a7a7a",linewidths=0,label=LBL_W)
+ax.fill(poly[:,0],poly[:,1],color=C["rf"],alpha=0.85,lw=0,label=LBL_WALL)
+ax.annotate("",xy=(46,-4.5),xytext=(8,-4.5),arrowprops=dict(arrowstyle="-|>",color=C["net"],lw=1.2)); ax.text(27,-10.8,LBL_HEAD,ha="center",color=C["net"],fontsize=7)
+ax.set_xlim(0,122); ax.set_ylim(-15,54); ax.set_aspect("equal"); ax.set_xlabel(LBL_X); ax.set_ylabel(LBL_Y); ax.legend(loc="lower right",fontsize=6.5,handletextpad=0.3,borderaxespad=0.2,markerscale=3)
+fig.savefig(OUT+"fig_setup.pdf"); plt.close(fig)
+# Fig 6: examples of reconstructed relief
+q=np.load(D+"results_S_v2/preds.npz"); R=q["R"]; A=q["extratrees"]; B=q["cnn_lstm_mse"]; e=np.sqrt(((A-R)**2).mean(1)); o=np.argsort(e); n=len(R)
+s=np.linspace(0,50,16); fig,ax=plt.subplots(2,2,figsize=(W,2.9),sharex=True,sharey=True)
+for a_,f in zip(ax.ravel(),(0.10,0.50,0.90,0.98)):
+    i=o[int(f*n)]; a_.plot(s,R[i],"-",color="#222",lw=1.3,label=LBL_TRUE); a_.plot(s,A[i],"--",color=C["rf"],lw=1.1,label=LBL_ET); a_.plot(s,B[i],":",color=C["net"],lw=1.3,label="CNN-LSTM")
+    a_.axhline(0,color="#bbb",lw=0.5); a_.set_title(LBL_PCT%(int(f*100),e[i]),fontsize=7,pad=2)
+fig.supxlabel(LBL_S,fontsize=8,y=-0.03)
+for a_ in ax[:,0]: a_.set_ylabel(LBL_R)
+ax[0,0].legend(fontsize=6,loc="upper center",bbox_to_anchor=(1.05,1.45),ncol=3,handlelength=1.6,columnspacing=1.0)
+fig.subplots_adjust(hspace=0.32,wspace=0.08); fig.savefig(OUT+"fig_sweep.pdf"); plt.close(fig)

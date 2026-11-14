@@ -1,6 +1,6 @@
-# Localización de objetos y límites de la discriminación de forma con torques simulados de bigotes (WHISKiT)
+# Del toque al barrido: posición, forma y perfil de objetos a partir del torque en la base de los bigotes
 
-Código, cuadernos, resultados y manuscrito del estudio "What Can Be Recovered from Whisker-Base Torque?" (Carolina Londoño Idárraga y Dr.-Ing. José Luis Zárate Moya, Universitat Internacional Valenciana).
+Código, cuadernos, resultados y manuscrito del estudio "From Touching to Sweeping: Object Position, Shape and Profile from Whisker-Base Torque" (Carolina Londoño Idárraga y Dr.-Ing. José Luis Zárate Moya, Universitat Internacional Valenciana).
 
 Los momentos y fuerzas en la base de los 27 bigotes derechos de la rata se generan con [WHISKiT Physics](https://github.com/SeNSE-lab/whiskitphysics) (laboratorio SeNSE) y se usan para entrenar modelos que estiman la posición y la forma de un objeto.
 
@@ -12,12 +12,13 @@ Los momentos y fuerzas en la base de los 27 bigotes derechos de la rata se gener
 | D1 (forma acoplada a la pose) | ¿Qué forma tiene el objeto? | Exactitud aparente de 0,70, pero un control que solo ve la pose alcanza 0,62: atajo de diseño |
 | D2 (forma desacoplada, cabeza quieta) | Igual | Forma al azar (0,39; azar 0,33). Posición: 1,78 mm |
 | D3 (forma desacoplada, cabeza avanzando) | Igual | Forma al azar (0,38). Posición: 2,56 mm |
+| S (barrido de una pared con relieve) | ¿Cuál es el perfil de la superficie? | El relieve se reconstruye en 16 puntos con 1,22 a 1,37 mm de error (línea base 2,76 mm). Entrenando con ruido, la CNN-LSTM mantiene 1,44 a 1,55 mm con hasta un 20 % de ruido |
 
 El manuscrito está en `paper/` (inglés y español).
 
 ## Estructura
 
-- `dataset/`: generadores de simulaciones (`run_dataset*.py`), empaquetado (`build_npz*.py`), entrenamiento (`train_A.py`, `train_B.py`), robustez y ablación.
+- `dataset/`: generadores de simulaciones (`run_dataset*.py`), empaquetado (`build_npz*.py`), entrenamiento (`train_A.py`, `train_B.py`, `train_S.py`), robustez y ablación.
 - `patches/whiskit_patches.diff`: cambios a WHISKiT Physics (posición, rotación y escala del objeto; cabeza que avanza; opciones de línea de comandos).
 - `notebooks/`: cuadernos de Google Colab que compilan WHISKiT y generan cada conjunto de datos (sin GPU; es CPU).
 - `results/`: resultados (JSON) y registros de los experimentos.

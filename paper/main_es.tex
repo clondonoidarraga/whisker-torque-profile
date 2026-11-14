@@ -15,7 +15,7 @@
 
 \begin{document}
 
-\title{¿Qué se puede recuperar del torque en la base de los bigotes? Localización de objetos y límites de la discriminación de forma en una matriz simulada de vibrisas de rata}
+\title{Del toque al barrido: posición, forma y perfil de objetos a partir del torque en la base de los bigotes}
 
 \author{\IEEEauthorblockN{Carolina Londoño Idárraga}
 \IEEEauthorblockA{Máster en Inteligencia Artificial\\
@@ -29,11 +29,11 @@ zarate.jl@gmail.com}}
 \maketitle
 
 \begin{abstract}
-Los roedores localizan e identifican objetos con sus bigotes usando únicamente las señales mecánicas que llegan a la base de cada bigote. Estudiamos cuánta de la geometría de un objeto pueden recuperar modelos de aprendizaje a partir de esas señales. Con el simulador WHISKiT Physics generamos 1212 simulaciones nuevas de una matriz de 27 bigotes que bate activamente contra objetos, y registramos los tres momentos y las tres fuerzas en la base de cada bigote. Los modelos se evalúan con validación cruzada por simulación, normalización ajustada solo con entrenamiento, varias semillas aleatorias y modelos de referencia sin dinámica temporal. Para un poste vertical, una CNN--LSTM compacta recupera su posición en el plano con un error de \pmsd{1.76}{0.14}~mm, en empate estadístico con un bosque aleatorio sobre un mapa de contacto estático (\pmsd{1.71}{0.28}~mm), pero es mucho más robusta al ruido del sensor: con ruido del 20\,\% de la desviación estándar del canal su error se mantiene en 1,84~mm, mientras que el del bosque aleatorio sube a 5,65~mm. Para objetos de tres familias de forma, la posición se sigue recuperando (1,78--2,56~mm), pero la forma no: una vez que la forma del objeto se desacopla de su pose, todos los modelos quedan al nivel del azar, tanto con la cabeza quieta (exactitud de 0,39; azar 0,33) como con la cabeza avanzando hacia el objeto (0,38). Un clasificador de control que solo ve la pose del objeto deja al descubierto un atajo de diseño que, de otro modo, habría producido una exactitud aparente de 0,70. Concluimos que, en este régimen de contactos breves, el torque en la base de los bigotes contiene información robusta sobre dónde está un objeto, pero no sobre qué es, y que los controles de solo pose son necesarios en los bancos de prueba táctiles simulados.
+Los roedores localizan e identifican objetos con sus bigotes usando únicamente las señales mecánicas que llegan a la base de cada bigote. Estudiamos cuánta de la geometría de un objeto pueden recuperar modelos de aprendizaje a partir de esas señales y cómo depende la respuesta del tipo de contacto. Con el simulador WHISKiT Physics generamos 2232 simulaciones nuevas de una matriz de 27 bigotes y registramos los tres momentos y las tres fuerzas en la base de cada bigote. Los modelos se evalúan con validación cruzada por simulación, normalización ajustada solo con entrenamiento, varias semillas aleatorias, modelos de referencia sin dinámica temporal y modelos de control. Se presentan tres experimentos. (i) Para un poste vertical tocado durante el batido, una CNN--LSTM compacta recupera su posición en el plano con un error de \pmsd{1.76}{0.14}~mm, empatada con un bosque aleatorio sobre un mapa de contacto estático (\pmsd{1.71}{0.28}~mm), pero mucho más robusta al ruido del sensor. (ii) Para objetos pequeños de tres familias de forma tocados del mismo modo, la posición se recupera (1,78--2,56~mm) pero la forma no: una vez desacoplada la forma de la pose, todos los modelos quedan en el azar, con la cabeza quieta (exactitud de 0,39; azar 0,33) o avanzando hacia el objeto (0,38); un clasificador de control que solo ve la pose deja al descubierto un atajo de diseño que, de otro modo, habría producido una exactitud aparente de 0,70. (iii) Cuando la cabeza se desplaza a lo largo de una pared y los bigotes barren su superficie, el relieve de la pared se reconstruye en 16 puntos con un error de 1,22--1,37~mm frente a 2,76~mm de la línea base, con una correlación mediana de 0,91--0,93 entre el perfil real y el reconstruido. Los modelos entrenados con señales limpias pierden esa capacidad con poco ruido, pero entrenar con ruido la recupera, y en ese régimen la CNN--LSTM es el modelo más preciso (1,44--1,55~mm con hasta un 20\,\% de ruido). Concluimos que el tipo de contacto, más que el modelo, determina lo que se puede percibir: los toques breves dicen dónde está un objeto, y para recuperar su forma hay que recorrerlo.
 \end{abstract}
 
 \begin{IEEEkeywords}
-percepción táctil, bigotes, vibrisas, señales de torque, WHISKiT Physics, CNN--LSTM, red convolucional temporal, aprendizaje por atajos
+percepción táctil, bigotes, vibrisas, señales de torque, reconstrucción de perfil, WHISKiT Physics, CNN--LSTM, red convolucional temporal, aprendizaje por atajos
 \end{IEEEkeywords}
 
 \section{Introducción}
@@ -41,11 +41,12 @@ Las ratas exploran su entorno moviendo los bigotes de la cara hacia adelante y h
 
 Para un solo bigote en régimen cuasiestático, la mecánica se conoce bien: el cociente entre el momento y la fuerza en la base determina la distancia radial de un contacto~\cite{kaneko1998,birdwell2007}, y la combinación de varias señales mecánicas da la posición tridimensional del contacto~\cite{huet2017}. Solomon y Hartmann usaron este principio para extraer rasgos de objetos con bigotes robóticos~\cite{solomon2006}. Se sabe mucho menos sobre qué puede decodificarse de una matriz completa durante el batido activo, donde los contactos son breves, los bigotes tienen inercia y decenas de ellos interactúan con el objeto al mismo tiempo. El simulador WHISKiT Physics~\cite{zweifel2021} modela esta situación para la matriz de la rata y devuelve la señal mecánica completa en la base de cada bigote, lo que permite plantear la decodificación como un problema de aprendizaje supervisado.
 
-Este artículo plantea una pregunta deliberadamente simple: dados los momentos y las fuerzas en la base de 27 bigotes durante el batido activo, ¿qué propiedades de un objeto puede recuperar un modelo de aprendizaje y cuáles no? Presentamos un conjunto nuevo de experimentos diseñado para este estudio. Las contribuciones son:
+Este artículo plantea una pregunta deliberadamente simple: dados los momentos y las fuerzas en la base de 27 bigotes durante el batido activo, ¿qué propiedades de un objeto puede recuperar un modelo de aprendizaje y cuáles no? Presentamos un conjunto nuevo de experimentos diseñado para este estudio, organizado según el tipo de contacto: toques breves durante el batido y barrido a lo largo de una superficie. Las contribuciones son:
 \begin{itemize}
 \item Un flujo de trabajo reproducible que convierte WHISKiT Physics en un generador de conjuntos de datos de torque etiquetados, con control desde la línea de comandos de la posición, la orientación y la escala del objeto y del movimiento de la cabeza.
 \item Un resultado de localización: la posición en el plano de un poste se recupera con un error inferior a 2~mm, y se muestra que un modelo temporal es mucho más robusto al ruido del sensor que un resumen estático del contacto, aunque ambos son igual de precisos con datos limpios.
-\item Un resultado negativo con dos réplicas independientes: la forma de objetos pequeños no puede discriminarse a partir de estas señales, ni con la cabeza quieta ni con la cabeza acercándose al objeto.
+\item Un resultado negativo con dos réplicas independientes: con toques breves, la forma de objetos pequeños no puede discriminarse a partir de estas señales, ni con la cabeza quieta ni con la cabeza acercándose al objeto.
+\item Un resultado positivo que explica el anterior: cuando los bigotes barren una superficie, su relieve se reconstruye con un error de 1,2 a 1,4~mm, y entrenar con ruido hace robusta la reconstrucción.
 \item Un hallazgo metodológico: un clasificador de control que solo ve la pose revela que una forma natural de generar poses válidas acopla la forma a la posición e infla la exactitud de forma desde el azar hasta 0,70.
 \end{itemize}
 
@@ -75,7 +76,7 @@ Cada simulación produce una muestra: un tensor de tamaño $T\times 27\times 6$ 
 \end{figure}
 
 \subsection{Conjuntos de datos}
-La Tabla~\ref{tab:datasets} resume los cuatro conjuntos de datos.
+La Tabla~\ref{tab:datasets} resume los cinco conjuntos de datos.
 
 \textbf{Conjunto P (localización del poste).} Un poste vertical fijo se coloca en una posición muestreada de forma uniforme en $x\in[12,42]$~mm, $y\in[9,31]$~mm, excluyendo dos esquinas que la matriz no alcanza. La etiqueta es la posición $(x,y)$ del poste.
 
@@ -88,22 +89,31 @@ Los tres conjuntos difieren en cómo se asignan las poses:
 \item \textbf{D3 (cabeza avanzando, forma desacoplada).} Como D2, pero la cabeza avanza hacia el objeto a 60~mm/s, unos 28~mm durante la simulación, de modo que los bigotes se presionan contra el objeto en lugar de rozarlo con las puntas. Además, las poses deben mantener el objeto por delante de la cabeza en todo momento.
 \end{itemize}
 
+\textbf{Conjunto S (reconstrucción de perfil por barrido).} Una pared con relieve aleatorio queda a la derecha de la cabeza, paralela al eje rostro-caudal, y la cabeza avanza a 120~mm/s durante 0,7~s (unos 80~mm), de modo que los bigotes barren su superficie mientras baten, como cuando una rata sigue una pared (Fig.~\ref{fig:setup}). La pared ocupa $x\in[55,105]$~mm, más allá del alcance de la matriz en reposo, con rampas de entrada y salida de 12~mm. Su superficie es $y(s)=y_0-p(s)$, donde $s$ es la posición a lo largo de la pared, $y_0\in[30,34]$~mm es la distancia lateral media y $p(s)=\sum_{k=1}^{3}a_k\cos(2\pi k s/L+\varphi_k)$ con $L=50$~mm, $a_1\in[1{,}5;\,5]$, $a_2\in[0;\,3]$ y $a_3\in[0;\,1{,}5]$~mm y fases aleatorias. La etiqueta es el \emph{relieve}, la superficie menos su nivel medio, muestreado en 16 puntos equiespaciados; su valor cuadrático medio en el conjunto es de 2,77~mm. Las señales de este conjunto tienen cola pesada: la mediana del momento máximo es 21, pero el 10\,\% de las simulaciones supera 258 y siete superan 1000, lo que puede corresponder a contactos más profundos de lo realista. Se usan las 1020 simulaciones.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs_es/fig_setup.pdf}
+\caption{Vista superior del conjunto~S. La pared con relieve aleatorio empieza más allá del alcance de los bigotes en reposo; la cabeza avanza unos 80~mm y los bigotes barren la superficie de la pared.}
+\label{fig:setup}
+\end{figure}
+
 \begin{table}[t]
 \caption{Conjuntos de datos generados para este estudio}
 \label{tab:datasets}
 \centering
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}lcccc@{}}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lccccc@{}}
 \toprule
- & P & D1 & D2 & D3 \\
+ & P & D1 & D2 & D3 & S \\
 \midrule
-Objeto & poste & 9 mallas & 9 mallas & 9 mallas \\
-Cabeza & quieta & quieta & quieta & avanzando \\
-Forma indep. de la pose & -- & no & sí & sí \\
-Simulaciones & 300 & 300 & 306 & 306 \\
-Duración (s) & 1,0 & 1,0 & 0,5 & 0,5 \\
-Con contacto & 283 & 284 & 272 & 275 \\
-Mediana del momento máx. & 4,5 & 2,2 & 1,5 & 2,7 \\
+Objeto & poste & 9 mallas & 9 mallas & 9 mallas & pared \\
+Cabeza & quieta & quieta & quieta & avanza & barre \\
+Forma indep. de la pose & -- & no & sí & sí & sí \\
+Simulaciones & 300 & 300 & 306 & 306 & 1020 \\
+Duración (s) & 1,0 & 1,0 & 0,5 & 0,5 & 0,7 \\
+Usadas en la evaluación & 283 & 284 & 272 & 275 & 1020 \\
+Mediana del momento máx. & 4,5 & 2,2 & 1,5 & 2,7 & 21 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -119,10 +129,14 @@ Mediana del momento máx. & 4,5 & 2,2 & 1,5 & 2,7 \\
 
 Para forma y posición las redes tienen dos cabezas, tres \emph{logits} para la familia de forma y dos salidas para la posición, entrenadas con entropía cruzada más diez veces el error cuadrático medio. El giro no se predice porque no está definido de forma única para cilindros y prismas simétricos.
 
+\textbf{Modelos para la reconstrucción de perfil.} En el conjunto~S las redes producen los 16 valores del relieve. El promedio temporal descartaría cuándo ocurrió cada contacto, que aquí equivale a en qué punto de la pared ocurrió, así que las características se agrupan en ocho tramos de tiempo consecutivos que se concatenan antes de la cabeza. Como las señales tienen cola pesada, la entrada de las redes es $\mathrm{sign}(x)\log(1+|x|)$, estandarizada por canal y recortada a $\pm5$. La referencia sin dinámica temporal es un regresor de árboles extremadamente aleatorios (ExtraTrees, 400 árboles)~\cite{geurts2006} sobre rasgos construidos a mano que conservan el orden temporal: la media, en 20 tramos de tiempo consecutivos, del momento de flexión, la torsión y la fuerza transversal de cada bigote, tras una transformación $\log(1+x)$ (1620 rasgos). Se usan dos controles: un bosque aleatorio que solo ve la distancia media $y_0$ y ExtraTrees entrenado con las etiquetas barajadas. Las redes se entrenan con el error cuadrático medio; también se evalúa una pérdida que añade un término de similitud estructural unidimensional~\cite{wang2004}, $0{,}3\,\mathrm{MSE}+0{,}7\,(1-\mathrm{SSIM})$, ya que aquí la salida es un perfil.
+
 \subsection{Protocolo de evaluación}
 La unidad de partición es la simulación. Usamos validación cruzada de cinco pliegues (estratificada por clase en D1--D3); dentro de cada pliegue de entrenamiento se reserva el 20\,\% de las simulaciones para la parada temprana, y el pliegue de prueba se evalúa una sola vez. Cada canal se estandariza con la media y la desviación estándar de las simulaciones de entrenamiento únicamente. Las redes se entrenan con Adam~\cite{kingma2015} (tasa de aprendizaje $10^{-3}$, decaimiento de pesos $10^{-4}$, lotes de 8), reducción de la tasa de aprendizaje en meseta y parada temprana, y cada pliegue se repite con varias semillas aleatorias (tres en el conjunto~P, dos en los demás). Las etiquetas de posición se dividen entre 50~mm para el entrenamiento. Salvo indicación contraria, las señales se submuestrean a 500~Hz. Reportamos el error euclídeo medio de posición en milímetros y la exactitud de clasificación, como media~$\pm$~desviación estándar entre pliegues y semillas.
 
-La robustez se mide evaluando modelos entrenados con datos limpios sobre simulaciones de prueba perturbadas: ruido gaussiano aditivo con desviación estándar igual al 5, 10 o 20\,\% de la desviación estándar de entrenamiento de cada canal, escalado de amplitud por 0,8 o 1,2 y desfases temporales de $\pm5$ muestras.
+En el conjunto~S las señales se submuestrean a 250~Hz, las etiquetas se dividen entre 3~mm, los lotes son de 32 y cada pliegue se repite con tres semillas; reportamos la raíz del error cuadrático medio (RMSE) del relieve en milímetros y la mediana, entre simulaciones, de la correlación entre el perfil real y el reconstruido.
+
+La robustez se mide evaluando modelos entrenados con datos limpios sobre simulaciones de prueba perturbadas: ruido gaussiano aditivo con desviación estándar igual al 5, 10 o 20\,\% de la desviación estándar de entrenamiento de cada canal, escalado de amplitud por 0,8 o 1,2 y desfases temporales de $\pm5$ muestras. En el conjunto~S también entrenamos con ruido: en las redes, a la señal cruda de cada lote de entrenamiento se le suma ruido gaussiano con un nivel elegido uniformemente entre 0 y 20\,\% de la desviación estándar del canal; en ExtraTrees, el conjunto de entrenamiento se amplía con copias ruidosas al 5, 10 y 20\,\%.
 
 \section{Resultados}
 \subsection{Localización del poste}
@@ -246,17 +260,74 @@ TCN & \pmsd{5.31}{1.08} & \pmsd{3.90}{0.70} & \pmsd{5.88}{0.73} \\
 \label{fig:shape}
 \end{figure}
 
+\subsection{Reconstrucción de perfil por barrido}
+\label{sec:sweep}
+La Tabla~\ref{tab:sweep} da el error de reconstrucción en el conjunto~S. Predecir la media de entrenamiento da 2,76~mm. ExtraTrees sobre los rasgos por tramos de tiempo alcanza \pmsd{1.22}{0.04}~mm, la TCN \pmsd{1.28}{0.07}~mm y la CNN--LSTM \pmsd{1.37}{0.04}~mm, una reducción del 50 al 56\,\%; la correlación mediana entre el perfil real y el reconstruido es de 0,91 a 0,93, y con ExtraTrees supera 0,8 en el 91\,\% de las simulaciones. Los dos controles quedan en la línea base: el modelo que solo ve la distancia de la pared da 2,95~mm y el entrenado con etiquetas barajadas, 2,80~mm. La Fig.~\ref{fig:sweep} muestra ejemplos: las ondulaciones amplias se siguen de cerca y los picos estrechos salen atenuados.
+
+La cantidad de datos importa: con las primeras 120 simulaciones ExtraTrees dio 1,74~mm, y con 1020 da 1,22~mm. También importa el orden temporal de la señal: ExtraTrees sobre un mapa de contacto estático dio 2,33~mm en las primeras 120 simulaciones, frente a 1,74~mm con tramos de tiempo. El recorte de la entrada fue necesario para la TCN: sin él, tres simulaciones con momentos extremos produjeron errores de hasta 36~mm (\pmsd{1.62}{0.87}~mm entre pliegues). La pérdida con término de similitud estructural no ayudó (\pmsd{1.51}{0.26}~mm, una semilla, sin recorte).
+
+\begin{table}[t]
+\caption{Reconstrucción de perfil por barrido (conjunto S): error del relieve en 16 puntos y correlación mediana entre el perfil real y el reconstruido (cinco pliegues; tres semillas en las redes)}
+\label{tab:sweep}
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Modelo & RMSE (mm) & Correlación \\
+\midrule
+Media de entrenamiento & \pmsd{2.76}{0.02} & -- \\
+Control: solo distancia de la pared & \pmsd{2.95}{0.03} & 0,05 \\
+Control: etiquetas barajadas & \pmsd{2.80}{0.03} & $-0{,}06$ \\
+ExtraTrees sobre tramos de tiempo & \pmsd{1.22}{0.04} & 0,93 \\
+TCN & \pmsd{1.28}{0.07} & 0,92 \\
+CNN--LSTM & \pmsd{1.37}{0.04} & 0,91 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs_es/fig_sweep.pdf}
+\caption{Relieve real y reconstruido en cuatro simulaciones de prueba del conjunto~S, en los percentiles 10, 50, 90 y 98 del error de ExtraTrees (modelos entrenados con datos limpios).}
+\label{fig:sweep}
+\end{figure}
+
+\textbf{Robustez al ruido.} La Tabla~\ref{tab:sweepnoise} muestra que los modelos entrenados con señales limpias pierden la reconstrucción con poco ruido: con ruido del 5\,\% de la desviación estándar del canal, ExtraTrees cae a 2,98~mm, peor que la línea base, y las redes a 2,20--2,35~mm. La razón está en la distribución de la señal. Un bigote está en contacto alrededor del 5\,\% del tiempo, así que el 90\,\% de las muestras del momento de flexión queda por debajo de 0,06, mientras que un pico típico de contacto es de 5,8 y unos pocos valores superan 1000; la desviación estándar del canal, cercana a 1,5, está dominada por esos pocos valores, y un ruido del 5\,\% de ella (0,08) es solo el 1\,\% de un pico típico pero mayor que la mayoría de las muestras. Ese ruido tapa los contactos débiles que marcan dónde empieza y dónde termina cada ondulación. Entrenar con ruido recupera la reconstrucción: con un 20\,\% de ruido la CNN--LSTM da 1,55~mm, la TCN 1,56~mm y ExtraTrees 1,64~mm. El costo con datos limpios es pequeño para las redes (de 1,37 a 1,44~mm en la CNN--LSTM) y mayor para ExtraTrees (de 1,22 a 1,63~mm), de modo que en el régimen entrenado con ruido las redes son los modelos más precisos.
+
+\begin{table}[t]
+\caption{Conjunto S: error del relieve (mm) con ruido aditivo en la prueba, para modelos entrenados con datos limpios y para modelos entrenados con ruido}
+\label{tab:sweepnoise}
+\centering
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Ruido en la prueba & 0\,\% & 5\,\% & 10\,\% & 20\,\% \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Entrenados con datos limpios (tres semillas)}} \\
+ExtraTrees & 1,22 & 2,98 & 3,13 & 3,30 \\
+CNN--LSTM & 1,37 & 2,35 & 2,58 & 2,73 \\
+TCN & 1,28 & 2,20 & 2,42 & 2,59 \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Entrenados con ruido (una semilla)}} \\
+ExtraTrees & 1,63 & 1,64 & 1,64 & 1,64 \\
+CNN--LSTM & 1,44 & 1,46 & 1,49 & 1,55 \\
+TCN & 1,46 & 1,49 & 1,52 & 1,56 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Discusión}
 \textbf{Dónde frente a qué.} Las señales en la base de la matriz contienen información robusta sobre la posición del objeto. Un resumen estático, el mayor momento visto por cada bigote, basta para ubicar un poste con menos de 2~mm de error, lo que concuerda con la visión clásica en la que el patrón de qué bigotes tocan y con cuánta fuerza codifica la localización~\cite{kaneko1998,birdwell2007}. La forma es un asunto distinto. Las tres familias usadas aquí difieren en unos pocos milímetros a la escala de un solo objeto, mientras que los bigotes vecinos están separados por varios milímetros y cada contacto dura una fracción de un ciclo de batido. Con la cabeza quieta, los objetos deben quedar más allá del alcance de la matriz en reposo para evitar la penetración inicial, así que solo los tocan las puntas de los bigotes; con la cabeza avanzando, el contacto es más fuerte, pero sigue siendo una secuencia corta de toques con una orientación desconocida. En ambos regímenes, las señales de las tres familias no son separables por ninguno de los modelos probados, incluido uno que solo resume el contacto y dos que usan la dinámica completa. Por eso atribuimos el resultado al contenido de información de la señal en este régimen de contacto y no a la capacidad de los modelos.
 
-\textbf{Cuándo importan los modelos temporales.} Con datos limpios, modelar la dinámica no mejoró la localización respecto al mapa de contacto, y todas las arquitecturas compactas rindieron de forma parecida. El beneficio del modelo temporal aparece con ruido en el sensor, donde conserva su precisión y el resumen basado en máximos no. Para un sensor físico, esta es la comparación más relevante.
+\textbf{Del toque al barrido.} El tercer experimento respalda esa lectura. Con el mismo simulador, los mismos bigotes y los mismos modelos, cambiar únicamente el tipo de contacto hace que la forma pase de irrecuperable a recuperable: cuando la cabeza se desplaza a lo largo de la superficie, los instantes sucesivos corresponden a posiciones sucesivas de la pared, y el relieve se reconstruye con un error inferior a la mitad de la línea base. El barrido convierte un perfil espacial en una señal temporal, una idea ya presente en trabajos anteriores con bigotes robóticos~\cite{solomon2006}; aquí se muestra para una matriz que bate, con dinámica completa. La reconstrucción es suave: capta la forma a gran escala y atenúa los rasgos estrechos.
+
+\textbf{Cuándo importan los modelos temporales.} Con datos limpios, modelar la dinámica no mejoró la localización respecto al mapa de contacto, y todas las arquitecturas compactas rindieron de forma parecida. El beneficio del modelo temporal aparece con ruido en el sensor, donde conserva su precisión y el resumen basado en máximos no. Para un sensor físico, esta es la comparación más relevante. El mismo patrón aparece en la reconstrucción de perfil: con datos limpios, un modelo de árboles sobre rasgos construidos a mano es al menos tan preciso como las redes, y cuando hay ruido y los modelos se entrenan con él, la CNN--LSTM es la más precisa. En ese experimento, sin embargo, la robustez al ruido no es gratuita: hay que entrenarla, porque la información está en contactos débiles.
 
 \textbf{Controles de solo pose.} El atajo de D1 surgió de un paso razonable, rechazar las poses inválidas para cada objeto, y habría pasado inadvertido en una evaluación estándar, porque la exactitud estaba muy por encima del azar y la matriz de confusión parecía plausible. Un clasificador que solo ve las variables de confusión se entrena en segundos, puede ejecutarse sobre la lista de poses antes de cualquier simulación y acota cuánto de un resultado puede ser un atajo~\cite{geirhos2020}. Sugerimos reportarlo siempre que las etiquetas y la colocación de los objetos se generen de forma conjunta.
 
-\textbf{Limitaciones.} Todos los resultados provienen de simulación, con una sola trayectoria de batido, un lado de la cara y la morfología de la rata promedio. Los conjuntos tienen unas 300 simulaciones cada uno, lo que es poco para modelos de secuencias y puede explicar por qué las redes quedan por detrás del bosque aleatorio en D2 y D3. Las familias de forma y los tamaños son específicos; objetos más grandes o más distintos podrían ser separables. La robustez al ruido se midió para la CNN--LSTM y el bosque aleatorio, no para la TCN, y la variante grande de LSTM apiladas se evaluó en un solo pliegue. Las señales están en unidades del simulador y no se aplica ningún modelo de sensor.
+\textbf{Limitaciones.} Todos los resultados provienen de simulación, con una sola trayectoria de batido, un lado de la cara y la morfología de la rata promedio. Los conjuntos tienen unas 300 simulaciones cada uno, lo que es poco para modelos de secuencias y puede explicar por qué las redes quedan por detrás del bosque aleatorio en D2 y D3. Las familias de forma y los tamaños son específicos; objetos más grandes o más distintos podrían ser separables. La robustez al ruido se midió para la CNN--LSTM y el bosque aleatorio, no para la TCN, y la variante grande de LSTM apiladas se evaluó en un solo pliegue. En la reconstrucción de perfil, alrededor del 10\,\% de las simulaciones tiene momentos muy altos que pueden no ser físicos, las paredes tienen relieves suaves de tres armónicos, se usó una sola velocidad de la cabeza y un rango estrecho de distancias, los modelos entrenados con ruido se corrieron con una semilla por pliegue, y el ruido es gaussiano e independiente entre muestras y canales. Las señales están en unidades del simulador y no se aplica ningún modelo de sensor.
 
 \section{Conclusión}
-A partir de simulaciones nuevas de una matriz de 27 bigotes en batido activo, los momentos y las fuerzas en la base de los bigotes permiten recuperar la posición de un poste con un error de 1,4 a 1,8~mm, y la posición de objetos pequeños con 1,8 a 2,6~mm. Una CNN--LSTM es tan precisa como un mapa de contacto estático con datos limpios y claramente más robusta al ruido. La familia de forma de objetos pequeños no pudo discriminarse una vez desacopladas la forma y la pose, bajo dos regímenes de contacto, y fue necesario un control de solo pose para detectar que un diseño anterior había producido una exactitud espuria de 0,70. El trabajo futuro debería probar regímenes de contacto que recorran la superficie del objeto, como barridos laterales de la cabeza, conjuntos de datos más grandes, objetos con diferencias geométricas mayores y representaciones que aprovechen la disposición espacial de los bigotes.
+A partir de simulaciones nuevas de una matriz de 27 bigotes en batido activo, encontramos que lo que puede recuperarse de los momentos y las fuerzas en la base de los bigotes depende del tipo de contacto. Con toques breves, la posición de un poste se recupera con un error de 1,4 a 1,8~mm y la de objetos pequeños con 1,8 a 2,6~mm, pero la familia de forma de esos objetos no puede discriminarse una vez desacopladas la forma y la pose, y fue necesario un control de solo pose para detectar que un diseño anterior había producido una exactitud espuria de 0,70. Cuando los bigotes barren una superficie, su relieve se reconstruye con un error de 1,2 a 1,4~mm frente a una línea base de 2,8~mm. Tanto en la localización como en la reconstrucción, los modelos sin dinámica temporal igualan a las redes con datos limpios y la CNN--LSTM es la más precisa con ruido, siempre que, en la reconstrucción, se entrene con ruido. El trabajo futuro debería variar la velocidad y la distancia del barrido, usar relieves con más detalle, examinar las simulaciones con momentos extremos y probar el método en un sensor físico de bigotes.
 
 \section*{Disponibilidad de datos y código}
 Los parches del simulador, los generadores de conjuntos de datos, los programas de entrenamiento, los cuadernos y los archivos de resultados están disponibles en \url{https://github.com/clondonoidarraga/whisker-torque-profile}.
@@ -276,6 +347,7 @@ Los parches del simulador, los generadores de conjuntos de datos, los programas 
 \bibitem{kapoor2023} S. Kapoor and A. Narayanan, ``Leakage and the reproducibility crisis in machine-learning-based science,'' \emph{Patterns}, vol. 4, no. 9, 100804, 2023.
 \bibitem{geirhos2020} R. Geirhos \emph{et al.}, ``Shortcut learning in deep neural networks,'' \emph{Nat. Mach. Intell.}, vol. 2, no. 11, pp. 665--673, 2020.
 \bibitem{breiman2001} L. Breiman, ``Random forests,'' \emph{Mach. Learn.}, vol. 45, no. 1, pp. 5--32, 2001.
+\bibitem{geurts2006} P. Geurts, D. Ernst, and L. Wehenkel, ``Extremely randomized trees,'' \emph{Mach. Learn.}, vol. 63, no. 1, pp. 3--42, 2006.
 \bibitem{kingma2015} D. P. Kingma and J. Ba, ``Adam: A method for stochastic optimization,'' in \emph{Proc. Int. Conf. Learn. Represent. (ICLR)}, 2015.
 \bibitem{wang2004} Z. Wang, A. C. Bovik, H. R. Sheikh, and E. P. Simoncelli, ``Image quality assessment: From error visibility to structural similarity,'' \emph{IEEE Trans. Image Process.}, vol. 13, no. 4, pp. 600--612, 2004.
 \end{thebibliography}
