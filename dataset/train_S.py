@@ -90,9 +90,13 @@ def main():
     ap.add_argument("--folds", type=int, default=5); ap.add_argument("--seeds", type=int, default=1); ap.add_argument("--out", default="results_S")
     ap.add_argument("--nets", nargs="*", default=["cnn_lstm|mse", "tcn|mse", "cnn_lstm|mse_ssim"]); ap.add_argument("--only_trees", action="store_true")
     ap.add_argument("--clip", type=float, default=0.0, help="recorta la entrada estandarizada de las redes a ±clip (0 = sin recorte)")
+    ap.add_argument("--max_peak", type=float, default=0.0, help="excluye simulaciones cuyo momento máximo supera este valor (0 = no excluir)")
     ap.add_argument("--aug", action="store_true", help="entrenar con ruido añadido (redes: en cada lote; árboles: copias ruidosas del entrenamiento)")
     ap.add_argument("--noise", type=float, nargs="*", default=[], help="niveles de ruido en la prueba, como fracción de la desviación de cada canal"); a = ap.parse_args()
-    torch.set_num_threads(max(1, os.cpu_count())); X, R, y0 = load(a.data, a.stride); N, T, W, C = X.shape
+    torch.set_num_threads(max(1, os.cpu_count())); X, R, y0 = load(a.data, a.stride)
+    if a.max_peak > 0:
+        pk = np.abs(load(a.data, 1)[0][..., :3]).max(axis=(1, 2, 3)); keep = pk <= a.max_peak; X, R, y0 = X[keep], R[keep], y0[keep]; print(f"[filtro] momento máximo <= {a.max_peak:g}: {keep.sum()} de {len(keep)}", flush=True)
+    N, T, W, C = X.shape
     Ft = tree_feats(X); slog = lambda A: (np.sign(A) * np.log1p(np.abs(A))).reshape(len(A), T, W * C).astype(np.float32); Xn = slog(X)
     NZ = {}; addn = lambda k, lv, v: NZ.setdefault(k, {}).setdefault(str(lv), []).append(v)
     print(f"[datos] N={N} T={T} | relieve RMS {np.sqrt((R**2).mean()):.2f} mm", flush=True)

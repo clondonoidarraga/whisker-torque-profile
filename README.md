@@ -1,6 +1,6 @@
-# Del toque al barrido: posición, forma y perfil de objetos a partir del torque en la base de los bigotes
+# El tipo de contacto determina qué revelan las señales en la base de los bigotes: posición, forma y relieve
 
-Código, cuadernos, resultados y manuscrito del estudio "From Touching to Sweeping: Object Position, Shape and Profile from Whisker-Base Torque" (Carolina Londoño Idárraga y Dr.-Ing. José Luis Zárate Moya, Universitat Internacional Valenciana).
+Código, cuadernos, resultados y manuscrito del estudio "Contact Type Determines What Whisker-Base Signals Reveal: Position, Shape and Surface Relief in a Simulated Whisking Array" (Carolina Londoño Idárraga y Dr.-Ing. José Luis Zárate Moya, Universitat Internacional Valenciana).
 
 Los momentos y fuerzas en la base de los 27 bigotes derechos de la rata se generan con [WHISKiT Physics](https://github.com/SeNSE-lab/whiskitphysics) (laboratorio SeNSE) y se usan para entrenar modelos que estiman la posición y la forma de un objeto.
 
@@ -12,7 +12,7 @@ Los momentos y fuerzas en la base de los 27 bigotes derechos de la rata se gener
 | D1 (forma acoplada a la pose) | ¿Qué forma tiene el objeto? | Exactitud aparente de 0,70, pero un control que solo ve la pose alcanza 0,62: atajo de diseño |
 | D2 (forma desacoplada, cabeza quieta) | Igual | Forma al azar (0,39; azar 0,33). Posición: 1,78 mm |
 | D3 (forma desacoplada, cabeza avanzando) | Igual | Forma al azar (0,38). Posición: 2,56 mm |
-| S (barrido de una pared con relieve) | ¿Cuál es el perfil de la superficie? | El relieve se reconstruye en 16 puntos con 1,22 a 1,37 mm de error (línea base 2,76 mm). Entrenando con ruido, la CNN-LSTM mantiene 1,44 a 1,55 mm con hasta un 20 % de ruido |
+| S (barrido de una pared con relieve) | ¿Cuál es el perfil de la superficie? | El relieve se reconstruye en 16 puntos con 1,22 a 1,37 mm de error (línea base 2,76 mm); sin las simulaciones de momento extremo, 1,20 y 1,29 mm. Entrenando con ruido, la CNN-LSTM mantiene 1,44 a 1,55 mm con hasta un 20 % de ruido |
 
 El manuscrito está en `paper/` (inglés y español).
 

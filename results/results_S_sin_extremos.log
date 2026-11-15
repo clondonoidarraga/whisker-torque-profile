@@ -1,0 +1,14 @@
+[filtro] momento máximo <= 258: 918 de 1020
+[datos] N=918 T=174 | relieve RMS 2.70 mm
+[pliegue 0] media: 2.64 | solo_y0: 2.84 | extratrees: 1.14 | barajado: 2.65 | cnn_lstm|mse: 1.24   (3.2 min)
+[pliegue 1] media: 2.71 | solo_y0: 2.83 | extratrees: 1.19 | barajado: 2.73 | cnn_lstm|mse: 1.32   (5.6 min)
+[pliegue 2] media: 2.62 | solo_y0: 2.81 | extratrees: 1.18 | barajado: 2.65 | cnn_lstm|mse: 1.26   (7.8 min)
+[pliegue 3] media: 2.73 | solo_y0: 2.93 | extratrees: 1.25 | barajado: 2.71 | cnn_lstm|mse: 1.31   (9.9 min)
+[pliegue 4] media: 2.75 | solo_y0: 2.91 | extratrees: 1.23 | barajado: 2.79 | cnn_lstm|mse: 1.28   (12.0 min)
+
+=== RESUMEN (relieve, 16 puntos) ===
+media                RMSE 2.69 ± 0.05 mm | mejora   0.0 % | corr. de forma (mediana) 0.11
+solo_y0              RMSE 2.86 ± 0.05 mm | mejora  -6.3 % | corr. de forma (mediana) 0.10
+extratrees           RMSE 1.20 ± 0.04 mm | mejora  55.5 % | corr. de forma (mediana) 0.93
+barajado             RMSE 2.71 ± 0.05 mm | mejora  -0.6 % | corr. de forma (mediana) 0.07
+cnn_lstm|mse         RMSE 1.29 ± 0.03 mm | mejora  52.0 % | corr. de forma (mediana) 0.92
