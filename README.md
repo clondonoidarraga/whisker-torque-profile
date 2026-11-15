@@ -23,7 +23,7 @@ estimate the position, the shape family and the surface relief of an object.
 | Paper | Files | Results |
 |---|---|---|
 | Dataset P, Table II | `run_dataset.py`, `train_A.py` | `results/results_A_s2`, `_s5`, `_s10` |
-| Table III (architecture and loss) | `ablation_A.py` | `results/ablation_A` |
+| Table III (architecture and loss) | `ablation_A.py` | `results/ablation_A`, `results/ablation_A_large` |
 | Table IV (robustness) | `robustness_A.py` | `results/robust_A` |
 | Datasets D1, D2, D3, Table V | `run_dataset_B.py`, `_B2.py`, `_B3.py`, `train_B.py` | `results/results_B`, `_B2`, `_B3` |
 | Dataset S, Tables VI and VII | `run_dataset_S.py`, `train_S.py` | `results/results_S_v2`, `results_S_aug`, `results_S_sin_extremos` |

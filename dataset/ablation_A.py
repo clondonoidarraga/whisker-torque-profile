@@ -7,9 +7,9 @@ Variantes de arquitectura:
   cnn_lstm      Conv1D×2 + MaxPool + BiLSTM(64)            (modelo propuesto)
   cnn_only      Conv1D×2 + MaxPool + promedio temporal      (sin memoria recurrente)
   lstm_only     BiLSTM(64) directo sobre la serie           (sin extracción local)
-  tfm_3bilstm   Conv1D + BiLSTM(512,256,128) como en el TFM (misma familia, ~25× más parámetros)
+  large_3bilstm   Conv1D + BiLSTM(512,256,128) variante grande (misma familia, ~25× más parámetros)
   tcn           Red convolucional temporal dilatada (competidor moderno sin recurrencia)
-Variantes de pérdida (sobre cnn_lstm): smoothl1 (propuesta), mse, mse_ssim (0,3·MSE + 0,7·(1−SSIM) como en el TFM;
+Variantes de pérdida (sobre cnn_lstm): smoothl1 (propuesta), mse, mse_ssim (0,3·MSE + 0,7·(1−SSIM);
   con 2 salidas el "SSIM 1D" degenera, se incluye solo para documentar por qué no aplica a esta tarea).
 """
 import argparse, json, os, sys, time
@@ -43,8 +43,8 @@ class CNNLSTM(nn.Module):
     def forward(s, x): o, _ = s.lstm(s.conv(x.transpose(1, 2)).transpose(1, 2)); return s.head(o.mean(1))
 
 
-class TFM3BiLSTM(nn.Module):
-    """Réplica de la arquitectura del TFM: Conv1D(128,k5)+BN, BiLSTM 512→256→128 (dropout 0,3), Dense 1500, salida."""
+class Large3BiLSTM(nn.Module):
+    """Variante grande: Conv1D(128,k5)+BN, BiLSTM 512→256→128 (dropout 0,3), Dense 1500, salida."""
     def __init__(s, f):
         super().__init__()
         s.conv = nn.Sequential(nn.Conv1d(f, 128, 5, padding=2), nn.BatchNorm1d(128), nn.ReLU())
@@ -65,7 +65,7 @@ class TCN(nn.Module):
     def forward(s, x): return s.head(s.net(x.transpose(1, 2)).mean(2))
 
 
-ARCH = {"cnn_lstm": CNNLSTM, "cnn_only": CNNOnly, "lstm_only": LSTMOnly, "tfm_3bilstm": TFM3BiLSTM, "tcn": TCN}
+ARCH = {"cnn_lstm": CNNLSTM, "cnn_only": CNNOnly, "lstm_only": LSTMOnly, "large_3bilstm": Large3BiLSTM, "tcn": TCN}
 
 
 def ssim1d_loss(yt, yp):
@@ -101,20 +101,20 @@ def fit(model, Xtr, ytr, Xva, yva, loss_fn, seed, epochs=200, patience=20, bs=8,
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--data", required=True); ap.add_argument("--stride", type=int, default=2)
     ap.add_argument("--folds", type=int, default=5); ap.add_argument("--seeds", type=int, default=3); ap.add_argument("--out", default="ablation_A")
-    ap.add_argument("--only_tfm", action="store_true"); ap.add_argument("--max_folds", type=int, default=99); a = ap.parse_args()
+    ap.add_argument("--only_large", action="store_true"); ap.add_argument("--max_folds", type=int, default=99); a = ap.parse_args()
     torch.set_num_threads(max(1, os.cpu_count() - 1))
     X, y, info = load_data(a.data, a.stride); keep = np.abs(np.load(a.data)["X"][..., :3]).max(axis=(1, 2, 3)) >= 0.6; X, y = X[keep], y[keep]
     ysc = np.array([50.0, 50.0], np.float32)
     variants = [("cnn_lstm", "smoothl1"), ("cnn_only", "smoothl1"), ("lstm_only", "smoothl1"), ("tcn", "smoothl1"), ("cnn_lstm", "mse"), ("cnn_lstm", "mse_ssim")]
-    if a.only_tfm:
-        variants = [("tfm_3bilstm", "smoothl1")]
+    if a.only_large:
+        variants = [("large_3bilstm", "smoothl1")]
     res = {f"{ar}|{lo}": [] for ar, lo in variants}; os.makedirs(a.out, exist_ok=True); t0 = time.time()
     for fold, (trval, te) in enumerate(KFold(a.folds, shuffle=True, random_state=0).split(X)):
         if fold >= a.max_folds: break
         rng = np.random.default_rng(fold); perm = rng.permutation(trval); nv = int(0.2 * len(perm)); va, tr = perm[:nv], perm[nv:]
         sc = ChannelScaler().fit(X[tr]); Xtr, Xva, Xte = sc.transform(X[tr]), sc.transform(X[va]), sc.transform(X[te])
         for ar, lo in variants:
-            for s in range(1 if ar == 'tfm_3bilstm' else a.seeds):
+            for s in range(1 if ar == 'large_3bilstm' else a.seeds):
                 m = ARCH[ar](X.shape[-1]); nparam = sum(p.numel() for p in m.parameters()); t1 = time.time()
                 m, n_ep = fit(m, Xtr, y[tr] / ysc, Xva, y[va] / ysc, LOSS[lo], seed=100 * fold + s)
                 r = metrics(y[te], predict(m, Xte) * ysc); r.update(fold=fold, seed=s, epochs=n_ep, params=nparam, train_s=time.time() - t1); res[f"{ar}|{lo}"].append(r)

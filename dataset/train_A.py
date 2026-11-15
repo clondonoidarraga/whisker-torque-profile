@@ -2,7 +2,7 @@
 """
 Pipeline de entrenamiento y evaluación para la Tarea A: localizar el poste (x, y) a partir del torque.
 
-Diseño metodológico (cada punto corrige un error del TFM original):
+Diseño metodológico (decisiones de protocolo):
   1. La unidad de muestreo es la SIMULACIÓN, nunca la ventana. Train/val/test se separan por simulación,
      así ninguna señal del test se parece "demasiado" a una de train por solapamiento.
   2. Tres particiones: train (ajusta pesos), validación (decide early stopping), test (se evalúa UNA vez).
@@ -71,7 +71,7 @@ def metrics(y_true, y_pred):
 
 
 # --------------------------------------------------------------------------------------
-# Modelo CNN-LSTM (misma familia que el TFM, con los ejes correctos)
+# Modelo CNN-LSTM (tiempo como eje de secuencia)
 # --------------------------------------------------------------------------------------
 class CNNLSTM(nn.Module):
     def __init__(self, n_feat, conv=64, hidden=64, layers=1, dropout=0.2):

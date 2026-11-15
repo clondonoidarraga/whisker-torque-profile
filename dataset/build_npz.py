@@ -8,7 +8,7 @@ Forma de salida (Tarea A, localización):
    meta: sim_id, whisker_names, channel_names, t_stop, dropped_initial_steps
 
 Decisiones de diseño (y por qué):
- - El eje de secuencia es el TIEMPO, no el índice de bigote. Esto corrige la inversión de ejes del TFM.
+ - El eje de secuencia es el TIEMPO, no el índice de bigote.
  - Se descartan los primeros `drop` pasos: el simulador produce un transitorio numérico (~1e16) al inicializar.
  - NO se normaliza aquí. La normalización se ajusta SOLO con el conjunto de entrenamiento, en el script de
    entrenamiento, para evitar fuga de información del test.

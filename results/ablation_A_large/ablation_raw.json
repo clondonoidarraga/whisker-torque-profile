@@ -1,5 +1,5 @@
 {
- "tfm_3bilstm|smoothl1": [
+ "large_3bilstm|smoothl1": [
   {
    "mae_x": 2.598174810409546,
    "mae_y": 1.7904380559921265,
